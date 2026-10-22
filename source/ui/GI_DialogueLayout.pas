@@ -38,7 +38,9 @@ uses
 const
   // Story and replies read at about the journal's type size. Only they use it:
   // the original bezel at this scale would take the height they gain.
-  MobileDialogueTextDp = 1.1;
+  MobileDialogueTextDp = 1.0;
+  // The separator's upper bezel covers this much of the story glass.
+  StoryBottomMargin = 30;
 
 type
   // Owned by TalkPanel. Source artwork is decoded once; changing the answer
@@ -193,6 +195,7 @@ var
   Artwork: TDialogueArtworkGI;
   TextPanel, ChoicePanel: TPanelScrollBarGI;
   TextBottom, Width, Height: Integer;
+  LineHeight: Single;
 begin
   Artwork := TalkPanel.FindByNameRecursive('MobileDialogueArtwork') as TDialogueArtworkGI;
   if Artwork = nil then
@@ -203,10 +206,17 @@ begin
   // a bounded, scrollable answer area and reserve space for the story.
   // ChoicesHeight is in reply-panel units, which are larger than the frame's.
   TextBottom := Height - EnsureRange(Ceil(ChoicesHeight * Artwork.TextScale) + 68, 88, 168);
+  TextPanel := TalkPanel.FindByNameRecursive('TextScroll') as TPanelScrollBarGI;
+  // Show whole story lines: a line cut through the middle reads as a glitch.
+  // The spare height goes to the replies.
+  LineHeight := (TextPanel.FindByNameRecursive('TalkText') as TLabelGI).GetLineHeight * Artwork.TextScale;
+  if LineHeight > 0 then
+    // Glyph descenders reach past the last line box: keep a third of a line spare.
+    TextBottom := Artwork.TextTop + StoryBottomMargin + Ceil(
+        Max(1, Floor((TextBottom - StoryBottomMargin - Artwork.TextTop - LineHeight / 3) / LineHeight)) * LineHeight + LineHeight / 3);
   if not Artwork.UpdateFrame(Width, Height, TextBottom) then
     Exit;
-  TextPanel := TalkPanel.FindByNameRecursive('TextScroll') as TPanelScrollBarGI;
-  PlaceInFrame(TalkPanel, TextPanel, Rect(25, Artwork.TextTop, Width - 41, TextBottom - 16), Artwork.TextScale);
+  PlaceInFrame(TalkPanel, TextPanel, Rect(25, Artwork.TextTop, Width - 41, TextBottom - StoryBottomMargin), Artwork.TextScale);
   TextPanel.UpdateScrollRanges;
   TextPanel.VerticalScrollBar.SetLargeChange(TextPanel.ClientSize.Y);
   TextPanel.VerticalScrollBar.SetActive(TextPanel.FindByNameRecursive('TalkText').ClientSize.Y > TextPanel.ClientSize.Y);
