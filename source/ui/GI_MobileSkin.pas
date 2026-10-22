@@ -22,6 +22,9 @@ procedure LayoutMobileChoiceGrid(const Buttons: array of TGraphButtonGI; const A
 // height; its ends (Cap source pixels) keep their shape and only the plain
 // middle repeats, so a short tab becomes any wider button without stripes.
 procedure PaintMobileButtonArt(Image: TImageGI; const ArtPath: WideString; W, H, Cap: Integer);
+// Side-by-side phone arrangements (ship window, hangar) need a wide screen.
+// On 4:3 and 16:10 tablets the original stacked layout fits and is larger.
+function MobileSideBySideFits: Boolean;
 
 const
   // Reading windows let the planet or space scene show partly through their frame.
@@ -30,6 +33,11 @@ const
 implementation
 
 uses Math, SysUtils, GameWindow, GlobalsV, GI_Artwork, GR_GraphBuf, GR_Main;
+
+function MobileSideBySideFits: Boolean;
+begin
+  Result := GameScreenWidth >= 1.7 * GameScreenHeight;
+end;
 
 procedure PaintMobileButtonArt(Image: TImageGI; const ArtPath: WideString; W, H, Cap: Integer);
 var

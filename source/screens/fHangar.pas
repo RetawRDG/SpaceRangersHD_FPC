@@ -111,6 +111,7 @@ uses
   aSaveLoad,
   aScript,
   GI_Main,
+  GI_MobileSkin,
   GI_Panel,
   GameWindow,
   GI_Inspection,
@@ -236,7 +237,7 @@ begin
   (GetByName('ButRefuel') as TGraphButtonGI).UpCallback := RefuelClicked;
   (GetByName('ButTakeOff') as TGraphButtonGI).UpCallback := TakeOffClicked;
   (GetByName('ButClose') as TGraphButtonGI).UpCallback := PlanetPanel.PlanetClicked;
-  if GameMobileUiEnabled and HardwareRenderingEnabled then
+  if GameMobileUiEnabled and HardwareRenderingEnabled and MobileSideBySideFits then
     PrepareMobileHangar;
 end;
 

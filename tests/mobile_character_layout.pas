@@ -2,9 +2,9 @@ program mobile_character_layout;
 {$mode objfpc}
 uses Math, GI_LayoutMetrics;
 var M: TMobileCharacterMetrics;
-procedure Check(W, H: Integer; Density: Single);
+procedure Check(W, H: Integer);
 begin
-  M := MeasureMobileCharacter(W, H, Density);
+  M := MeasureMobileCharacter(W, H);
   if (M.Width * M.Scale > W - 15) or (M.Height * M.Scale > H - 15) then Halt(1);
   if (M.Width < 720) or (M.Height < 356) then Halt(2);
   { Five 44-unit choices, labels and gaps must fit between navigation rows. }
@@ -13,10 +13,12 @@ begin
   if (W = 2400) and (44 * M.Scale < 120) then Halt(4);
 end;
 begin
-  Check(2400, 1080, 3);
-  Check(1280, 576, 1.6);
-  Check(1920, 1080, 2.5);
-  Check(1280, 720, 2);
-  Check(1024, 600, 2);
+  Check(2400, 1080);
+  Check(1280, 576);
+  Check(1920, 1080);
+  Check(1280, 720);
+  Check(1024, 600);
+  { A 4:3 tablet fills its screen too. }
+  Check(1024, 768);
   WriteLn('Mobile character layout fits all tested landscape viewports.');
 end.

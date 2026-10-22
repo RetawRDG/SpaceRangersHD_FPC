@@ -263,7 +263,7 @@ begin
   inherited Create(Control('MainPanel'));
   SetName('MobileCharacterLayout');
   SetDepth(-100);
-  M := MeasureMobileCharacter(GameScreenWidth, GameScreenHeight, GetGameMobileUiScale);
+  M := MeasureMobileCharacter(GameScreenWidth, GameScreenHeight);
   SetSize(Point(M.Width, M.Height));
   BodyHeight := M.Height - 104;
   Background := TImageGI.Create(Self);

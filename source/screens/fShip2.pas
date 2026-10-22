@@ -423,6 +423,7 @@ var
   // One ship screen exists; its mobile arrangements and stat number bounds,
   // indexed by "local storage is available".
   MobileShipLayout: TMobileShipLayout;
+  MobileShipRelayout: Boolean;
   MobileModeStatBounds: array[Boolean, 0..3] of TRect;
 
 function RankToImage(Rank: TShipRank): WideString;
@@ -1122,11 +1123,14 @@ begin
   if GameMobileUiEnabled then
   begin
     StoragePanelRestTop := 0;
-    PrepareMobileShipWindow(Self, MainPanel.ContentBounds, MobileShipLayout);
+    MobileShipRelayout := MobileSideBySideFits;
+    if MobileShipRelayout then
+      PrepareMobileShipWindow(Self, MainPanel.ContentBounds, MobileShipLayout);
     for Storage := True downto False do
     begin
       // Before any number is fitted, so the bounds are the original rows.
-      ApplyMobileShipWindow(Self, MobileShipLayout, Storage);
+      if MobileShipRelayout then
+        ApplyMobileShipWindow(Self, MobileShipLayout, Storage);
       for I := 0 to High(MobileStatNames) do
         MobileModeStatBounds[Storage, I] := MobileScreenRect(GetByName(MobileStatNames[I]));
     end;
@@ -1154,7 +1158,8 @@ begin
     PlayerHoldShip := GetPlayer;
   if GameMobileUiEnabled and HardwareRenderingEnabled then
   begin
-    ApplyMobileShipWindow(Self, MobileShipLayout, CanUseLocalStorage);
+    if MobileShipRelayout then
+      ApplyMobileShipWindow(Self, MobileShipLayout, CanUseLocalStorage);
     for I := 0 to High(MobileStatNames) do
       MobileStatBounds[I] := MobileModeStatBounds[CanUseLocalStorage, I];
   end;
@@ -4982,7 +4987,7 @@ begin
       Exit;
     if GetByName('PanelDS').ContainsPoint(Point) then
       Exit;
-    if GameMobileUiEnabled and GetByName('MobileHoldBar').ContainsPoint(Point) then
+    if GameMobileUiEnabled and MobileShipRelayout and GetByName('MobileHoldBar').ContainsPoint(Point) then
       Exit;
     Panels := FindControlByPath('TestHitPanels');
     if Panels <> nil then

@@ -56,7 +56,7 @@ begin
   inherited Create(Screen.GetByName('MainPanel'));
   SetName('MobileIntroduction');
   SetDepth(-100);
-  M := MeasureMobileCharacter(GameScreenWidth, GameScreenHeight, GetGameMobileUiScale);
+  M := MeasureMobileCharacter(GameScreenWidth, GameScreenHeight);
   SetSize(Point(M.Width, M.Height));
   Left := M.Width div 4;
   W := M.Width - Left - 8;

@@ -24,7 +24,7 @@ type
 // These measurements are shared by the controls and their generated artwork.
 function MeasureDialogueExpansion(ContentHeight: Integer): TDialogueExpansion;
 function MeasureShopExpansion(LayoutWidth: Integer): TShopExpansion;
-function MeasureMobileCharacter(ScreenWidth, ScreenHeight: Integer; Density: Single): TMobileCharacterMetrics;
+function MeasureMobileCharacter(ScreenWidth, ScreenHeight: Integer): TMobileCharacterMetrics;
 // Index of the target nearest to Point, within Reach of its edges. Returns -1
 // when none qualifies or a different target is not at least Margin farther.
 function ChooseNearbyTouchTarget(const Point: TPoint; const Targets: array of TRect; Reach, Margin: Single): Integer;
@@ -34,9 +34,11 @@ implementation
 uses
   Math;
 
-function MeasureMobileCharacter(ScreenWidth, ScreenHeight: Integer; Density: Single): TMobileCharacterMetrics;
+function MeasureMobileCharacter(ScreenWidth, ScreenHeight: Integer): TMobileCharacterMetrics;
 begin
-  Result.Scale := Min(Density, Min((ScreenWidth - 16) / 720, (ScreenHeight - 16) / 356));
+  // Fill the screen down to the 720 x 356 design minimum. A tablet's dp is
+  // physically large, so a dp-based scale left most of its screen empty.
+  Result.Scale := Min((ScreenWidth - 16) / 720, (ScreenHeight - 16) / 356);
   Result.Width := Floor((ScreenWidth - 16) / Result.Scale + 0.0001);
   Result.Height := Floor((ScreenHeight - 16) / Result.Scale + 0.0001);
 end;
